@@ -1,6 +1,6 @@
 # PAtChER
 
-![logo](patcher_logo.png?raw=true "Logo")
+![logo](PAtChER_logo.png?raw=true "Logo")
 
 PAtChER is a tool to help re-assign non uniquely mapping reads within a HiChIP experiment.
 
