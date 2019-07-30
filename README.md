@@ -14,6 +14,7 @@ We highly recommend using virtual enviroments.
 virtualenv --include-lib patcherenv
 . patcherenv/bin/activate
 pip install mappy
+pip install pysam
 ```
 
 ## Running

@@ -22,7 +22,7 @@ def calc(queueIn, queueOut,threadid,d,cutsite,minlen):
         try:
             r1,r2 = queueIn.get(block = False)
             if r1 and r2:
-                nNone=0                
+                nNone=0
                 r1.splitRead(cutsite,minlen)
                 r1.qualtrim(10,10)
                 r2.splitRead(cutsite,minlen)
@@ -31,9 +31,7 @@ def calc(queueIn, queueOut,threadid,d,cutsite,minlen):
                 if r1.seq and r2.seq:
                     res=alignment.map(r1,r2,a,d)
                     if res:
-                        out = output.processOutput(res,r1,r2,"SAM",d)
-                        if out:
-                            queueOut.put(out)
+                        queueOut.put(res,r1,r2,d)
         except Empty:
             nNone+=1
             if nNone>1000000:
@@ -42,14 +40,15 @@ def calc(queueIn, queueOut,threadid,d,cutsite,minlen):
                 break
 
 def write(queue, fname,nthreads):
+
+
     fhandle = open(fname, "w")
     nNones=0
     while True:
         try:
             out = queue.get(block = False)
             if out:
-                fhandle.write(f"{out[0]}\n")
-                fhandle.write(f"{out[1]}\n")                
+                out = output.processOutput(out[0],out[1],out[2],out[3])               
             else:
                 if out==None:
                     nNones+=1
@@ -58,8 +57,8 @@ def write(queue, fname,nthreads):
                 break
     fhandle.close()
 
-def run(ref,r1,r2,fname,d,nthreads,cutsite,minlen):
-    global a 
+def run(ref,r1,r2,sambam_output,d,nthreads,cutsite,minlen):
+    global a
     print("Loading in Reference")
     a = mp.Aligner(ref,preset="sr")
     if not a: raise Exception("ERROR: failed to load/build index file")
@@ -70,7 +69,7 @@ def run(ref,r1,r2,fname,d,nthreads,cutsite,minlen):
     parlist = (r1,r2)
     feedProc = Process(target = feed , args = (workerQueue, parlist))
     calcProc = [Process(target = calc , args = (workerQueue, writerQueue,i,d,cutsite,minlen)) for i in range(nthreads-2)]
-    writProc = Process(target = write, args = (writerQueue, fname,nthreads))
+    writProc = Process(target = write, args = (writerQueue, sambam_output,nthreads))
 
 
     feedProc.start()
@@ -82,4 +81,4 @@ def run(ref,r1,r2,fname,d,nthreads,cutsite,minlen):
     for p in calcProc:
         p.join()
     writProc.join ()
-    print(f"Finished")    
+    print(f"Finished")

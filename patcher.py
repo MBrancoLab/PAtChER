@@ -3,7 +3,7 @@ from sys import argv
 import mappy as mp
 import processReads
 import alignment
-import output
+from output import SAMBAMWriter
 
 def getopts(argv):
     opts = {}  # Empty dictionary to store key-value pairs.
@@ -26,13 +26,9 @@ def printHelp():
     print("\t-l\t\tMinumum length read to keep for mapping. Defaults to 20")
     exit()
 
-    
-def runsingle(ref,reads1,reads2,fname,distance,cutsite,minlen):
+
+def runsingle(ref,reads1,reads2,sambam_output,distance,cutsite,minlen):
     fhandle = open(fname, "w")
-    print("Loading in Reference")
-    a = mp.Aligner(ref,preset="sr")
-    if not a: raise Exception("ERROR: failed to load/build index file")
-    print("Done.")
     print("Running Alignment")
     while True:
         try:
@@ -46,10 +42,7 @@ def runsingle(ref,reads1,reads2,fname,distance,cutsite,minlen):
             if r1.seq and r2.seq:
                 res=alignment.map(r1,r2,a,1000)
                 if res:
-                    out=output.processOutput(res,r1,r2,"SAM",1000)
-                    if out:
-                        fhandle.write(f"{out[0]}\n")
-                        fhandle.write(f"{out[1]}\n")                
+                    out=sambam_output.processOutput(res,r1,r2,1000)
         except StopIteration:
             break
     fhandle.close()
@@ -61,20 +54,25 @@ if __name__ == "__main__":
     cutsite="GATC"
     minlen=20
     myargs = getopts(argv)
-    if '-g' in myargs: 
+    if '-g' in myargs:
         ref=myargs["-g"]
+        print("Loading in Reference")
+        a = mp.Aligner(ref,preset="sr")
+        if not a: raise Exception("ERROR: failed to load/build index file")
+        print("Done.")
     else:
         printHelp()
-    if '-o' in myargs: 
+    if '-o' in myargs:
         fname=myargs["-o"]
+        sambam_output = SAMBAMWriter(fname, a)
     else:
         printHelp()
-    if '-r1' in myargs: 
+    if '-r1' in myargs:
         r1name=myargs["-r1"]
         reads1=mp.fastx_read(r1name)
     else:
         printHelp()
-    if '-r2' in myargs: 
+    if '-r2' in myargs:
         r2name=myargs["-r2"]
         reads2=mp.fastx_read(r2name)
     else:
@@ -87,8 +85,8 @@ if __name__ == "__main__":
         cutsite=myargs["-c"]
     if '-l' in myargs:
         minlen=int(myargs["-l"])
-    
-    
+
+
     print(f"Using refrence:{ref}")
     print(f"Using read 1:{r1name}")
     print(f'Using read 2:{r2name}')
@@ -97,10 +95,10 @@ if __name__ == "__main__":
     print(f"Using cutsite:{cutsite}")
     print(f"Writing to:{fname}")
     if nthreads>3:
-        multiproc.run(ref,reads1,reads2,fname,distance,nthreads,cutsite,minlen)
+        multiproc.run(ref,reads1,reads2,sambam_output,distance,nthreads,cutsite,minlen)
     else:
         if nthreads>1:
             print("Cannot run multithreading with less than 3 threads defaulting to single")
-        runsingle(ref,reads1,reads2,fname,distance,cutsite,minlen)
+        runsingle(ref,reads1,reads2,sambam_output,distance,cutsite,minlen)
     reads1.close()
-    reads2.close()        
+    reads2.close()
