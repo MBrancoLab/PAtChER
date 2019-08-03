@@ -1,6 +1,6 @@
 __pycache__/
-*.pyc 
+*.pyc
 .DS_Store
 .AppleDouble
 .LSOverride
-test_folder/
+test/
