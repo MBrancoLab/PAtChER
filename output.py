@@ -67,7 +67,6 @@ class SAMBAMWriter():
         read1.qual = read1.qual[res[0][0]["q_st"]:res[0][0]["q_en"]]
         hit1 = res[0][0]
         hit2 = res[1][0]
-
         if res[0][1] == "u" and res[1][1] == "u":
             if hit1["ctg"] == hit2["ctg"]:
                 if hit1["r_st"] < hit2["r_st"]:

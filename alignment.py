@@ -71,7 +71,12 @@ def process_unique_one(reference, hits, read1, read2, distance):
                 new_hits.append(hit)
         # Need to fix hit.ctg and hit.r_st???
         if len(new_hits) == 1:
-            out[indx] = [get_output_var(new_hits[0]),"r"]
+            if indx == 0:
+                out[1] = [get_output_var(new_hits[0]),"r"]
+                out[1][0]["ctg"] = out[0][0]["ctg"]
+            else:
+                out[0] = [get_output_var(new_hits[0]),"r"]
+                out[0][0]["ctg"] = out[1][0]["ctg"]
         elif len(new_hits) > 0:
             distance_list = []
             for new_hit in new_hits:
@@ -91,5 +96,10 @@ def process_unique_one(reference, hits, read1, read2, distance):
             selected_probability = random.random()*cumulative_probability
             for pindex in range(1, len(probability_list)):
                 if selected_probability >= probability_list[pindex]:
-                    out[indx] = [get_output_var(new_hits[pindex-1]),"p"]
+                    if indx == 0:
+                        out[1] = [get_output_var(new_hits[pindex-1]),"p"]
+                        out[1][0]["ctg"] = out[0][0]["ctg"]
+                    else:
+                        out[0] = [get_output_var(new_hits[pindex-1]),"p"]
+                        out[0][0]["ctg"] = out[1][0]["ctg"]
     return out
