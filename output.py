@@ -65,6 +65,11 @@ class SAMBAMWriter():
         # There is a bug in mappy that clips the mapping but doesn't provide the right cigar
         read1.seq = read1.seq[res[0][0]["q_st"]:res[0][0]["q_en"]]
         read1.qual = read1.qual[res[0][0]["q_st"]:res[0][0]["q_en"]]
+
+        # There is a bug in mappy that clips the mapping but doesn't provide the right cigar
+        read2.seq = read2.seq[res[1][0]["q_st"]:res[1][0]["q_en"]]
+        read2.qual = read2.qual[res[1][0]["q_st"]:res[1][0]["q_en"]]
+
         hit1 = res[0][0]
         hit2 = res[1][0]
         if res[0][1] == "u" and res[1][1] == "u":
@@ -99,16 +104,23 @@ class SAMBAMWriter():
         Take output from alignment (res) and reads (read1/read2)
         and process them to SAM/BAM
         """
+
         flag = 0
         if len(res[1]) == 0:
             if res[0][0]["strand"] == -1:
                 flag += 16
             hit = res[0][0]
+            # There is a bug in mappy that clips the mapping but doesn't provide the right cigar
+            read1.seq = read1.seq[res[0][0]["q_st"]:res[0][0]["q_en"]]
+            read1.qual = read1.qual[res[0][0]["q_st"]:res[0][0]["q_en"]]
             self.write_read(read1, hit, flag, "s")
         elif len(res[0]) == 0:
             if res[1][0]["strand"] == -1:
                 flag += 16
             hit = res[1][0]
+            # There is a bug in mappy that clips the mapping but doesn't provide the right cigar
+            read2.seq = read2.seq[res[1][0]["q_st"]:res[1][0]["q_en"]]
+            read2.qual = read2.qual[res[1][0]["q_st"]:res[1][0]["q_en"]]
             self.write_read(read2, hit, flag, "s")
         elif len(res[0]) == 2 and len(res[1]) == 2:
             self.process_paired_alignment(res, read1, read2, distance)

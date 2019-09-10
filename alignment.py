@@ -34,7 +34,7 @@ def map_reads(reference, read1, read2, distance):
     hits[0] = list(reference.map(read1.seq))
     hits[1] = list(reference.map(read2.seq))
     if len(hits[0]) == 1 and len(hits[1]) == 1:
-        out = [[get_output_var(hits[0][0]),"u"], [get_output_var(hits[1][0]),"u"]]
+        out = [[get_output_var(hits[0][0]), "u"], [get_output_var(hits[1][0]), "u"]]
     elif len(hits[0]) == 1 and len(hits[1]) == 0:
         out = [[get_output_var(hits[0][0])], []]
     elif len(hits[0]) == 0 and len(hits[1]) == 1:
@@ -55,11 +55,11 @@ def process_unique_one(reference, hits, read1, read2, distance):
     if len(hits[0]) == 1 and len(hits[1]) > 0:
         indx = 0
         seq = read2.seq
-        out = [[get_output_var(hits[0][0]),"u"], []]
+        out = [[get_output_var(hits[0][0]), "u"], []]
     elif len(hits[1]) == 1 and len(hits[0]) > 0:
         indx = 1
         seq = read1.seq
-        out = [[], [get_output_var(hits[1][0]),"u"]]
+        out = [[], [get_output_var(hits[1][0]), "u"]]
     #Get reference sequence for unique hit
     refseq = reference.seq(hits[indx][0].ctg,
                            hits[indx][0].r_st - distance, hits[indx][0].r_en + distance)
@@ -72,10 +72,10 @@ def process_unique_one(reference, hits, read1, read2, distance):
         # Need to fix hit.ctg and hit.r_st???
         if len(new_hits) == 1:
             if indx == 0:
-                out[1] = [get_output_var(new_hits[0]),"r"]
+                out[1] = [get_output_var(new_hits[0]), "r"]
                 out[1][0]["ctg"] = out[0][0]["ctg"]
             else:
-                out[0] = [get_output_var(new_hits[0]),"r"]
+                out[0] = [get_output_var(new_hits[0]), "r"]
                 out[0][0]["ctg"] = out[1][0]["ctg"]
         elif len(new_hits) > 0:
             distance_list = []
@@ -97,9 +97,9 @@ def process_unique_one(reference, hits, read1, read2, distance):
             for pindex in range(1, len(probability_list)):
                 if selected_probability >= probability_list[pindex]:
                     if indx == 0:
-                        out[1] = [get_output_var(new_hits[pindex-1]),"p"]
+                        out[1] = [get_output_var(new_hits[pindex-1]), "p"]
                         out[1][0]["ctg"] = out[0][0]["ctg"]
                     else:
-                        out[0] = [get_output_var(new_hits[pindex-1]),"p"]
+                        out[0] = [get_output_var(new_hits[pindex-1]), "p"]
                         out[0][0]["ctg"] = out[1][0]["ctg"]
     return out
