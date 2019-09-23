@@ -16,7 +16,7 @@ def getopts(argv):
     opts = {}  # Empty dictionary to store key-value pairs.
     while argv:  # While there are arguments left to parse...
         if argv[0][0] == '-':  # Found a "-name value" pair.
-            if argv[0][1] == "b":
+            if argv[0][1] in ["b", "D"]:
                 opts[argv[0]] = True
             else:
                 opts[argv[0]] = argv[1]  # Add key and value to the dictionary.
@@ -38,6 +38,7 @@ def print_help():
     print("\t-c\t\tCut Site. Defaults to GATC. This will cut GATCGATC")
     print("\t-l\t\tMinimum length read to keep for mapping. Defaults to 20")
     print("\t-b\t\tOutput results in BAM format")
+    print("\t-D\t\tTurn on debug")
     exit()
 
 
@@ -75,6 +76,7 @@ def main(argv):
     cut_site = "GATC"
     min_len = 20
     output_type = "SAM"
+    debug = False
     myargs = getopts(argv)
     if '-g' in myargs:
         reffile = myargs["-g"]
@@ -96,6 +98,8 @@ def main(argv):
         print_help()
     if '-d' in myargs:
         distance = int(myargs["-d"])
+    if '-D' in myargs:
+        debug = True
     if '-t' in myargs:
         nthreads = int(myargs["-t"])
     if '-c' in myargs:
@@ -115,13 +119,13 @@ def main(argv):
     print(f"Writing to:{fname}")
     if nthreads > 3:
         multiproc.run(reffile, reads1, reads2, fname,
-                      distance, nthreads, cut_site, min_len, output_type)
+                      distance, nthreads, cut_site, min_len, output_type, debug)
     else:
         if nthreads > 1:
             print("Cannot run multithreading with less than 3 threads defaulting to single")
         runsingle(reffile, reads1, reads2, fname, distance, cut_site, min_len, output_type)
     reads1.close()
     reads2.close()
-
+    print("Run complete")
 if __name__ == "__main__":
     main(sys.argv[1:])

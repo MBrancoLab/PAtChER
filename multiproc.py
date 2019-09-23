@@ -22,30 +22,45 @@ def feed(queue, parlist):
                 queue.put(None)
             break
 
-def process_read(queue_in, queue_out, thread_id, reference, distance, cut_site, min_len):
+def process_read(queue_in, queue_out, thread_id, reference, distance, cut_site, min_len, debug):
     """
     Method for the main processing including quality trim and read splitting
     plus alignment
     """
     nreads = 0
+    time_processing_reads = 0
+    alignment_time = 0
+    waiting_for_reads = 0
     while True:
         try:
             reads = queue_in.get(block=False)
+            start = time.time()
             if reads:
                 reads[0].split_read(cut_site, min_len)
                 reads[0].qual_trim(10, 10)
                 reads[1].split_read(cut_site, min_len)
                 reads[1].qual_trim(10, 10)
+                time_processing_reads += time.time() - start
                 nreads += 1
+                if nreads % 10000 == 0 and debug:
+                    print(f"""
+Time taken to process reads in: {time_processing_reads}
+Time taken for alignment: {alignment_time}
+Time taken waiting to process reads: {waiting_for_reads}
+                          """)
                 if reads[0].seq and reads[1].seq:
+                    start = time.time()
                     res = alignment.map_reads(reference, reads[0], reads[1], distance)
+                    alignment_time += time.time()-start
                     if res:
                         queue_out.put((res, reads[0], reads[1], distance))
             else:
                 queue_out.put(None)
                 break
         except Empty:
+            start = time.time()
             time.sleep(0.1)
+            waiting_for_reads += time.time()-start
 
 def save(queue, fname, reference, output_type, nthreads):
     """
@@ -66,7 +81,7 @@ def save(queue, fname, reference, output_type, nthreads):
                 break
 
 
-def run(reffile, read1, read2, fname, distance, nthreads, cut_site, min_len, output_type):
+def run(reffile, read1, read2, fname, distance, nthreads, cut_site, min_len, output_type, debug):
     """
     Method which sets up the multiprocessing and orchestrates the process
     """
@@ -87,7 +102,7 @@ def run(reffile, read1, read2, fname, distance, nthreads, cut_site, min_len, out
     threads = []
     for index in range(nthreads):
         x = Process(target=process_read,
-                             args=(read_queue, result_queue, index, reference, distance, cut_site, min_len,),
+                             args=(read_queue, result_queue, index, reference, distance, cut_site, min_len, debug),
                              daemon=True)
         x.start()
         threads.append(x)
