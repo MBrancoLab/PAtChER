@@ -13,9 +13,12 @@ def feed(queue, parlist):
     """
     while True:
         try:
-            read1 = process_reads.Read(parlist[0].__next__())
-            read2 = process_reads.Read(parlist[1].__next__())
-            queue.put((read1, read2))
+            if queue.full():
+                time.sleep(2)
+            else:
+                read1 = process_reads.Read(parlist[0].__next__())
+                read2 = process_reads.Read(parlist[1].__next__())
+                queue.put((read1, read2))
         except StopIteration:
             print("Finished Feeding Data")
             for t in range(parlist[2]):
@@ -77,6 +80,7 @@ def save(queue, fname, reference, output_type, nthreads):
                 if out == None:
                     n_nones += 1
         except Empty:
+            time.sleep(1)
             if n_nones == (nthreads - 2):
                 break
 
@@ -91,7 +95,7 @@ def run(reffile, read1, read2, fname, distance, nthreads, cut_site, min_len, out
         raise Exception("ERROR: failed to load/build index file")
     print("Done.")
 
-    read_queue = Queue()
+    read_queue = Queue(50000)
     result_queue = Queue()
     parlist = (read1, read2, nthreads)
     feed_proc = Process(target=feed, args=(read_queue, parlist))
@@ -100,7 +104,7 @@ def run(reffile, read1, read2, fname, distance, nthreads, cut_site, min_len, out
     feed_proc.start()
 
     threads = []
-    for index in range(nthreads):
+    for index in range(nthreads - 2):
         x = Process(target=process_read,
                              args=(read_queue, result_queue, index, reference, distance, cut_site, min_len, debug),
                              daemon=True)
