@@ -13,12 +13,9 @@ def feed(queue, parlist):
     """
     while True:
         try:
-            if queue.full():
-                time.sleep(2)
-            else:
-                read1 = process_reads.Read(parlist[0].__next__())
-                read2 = process_reads.Read(parlist[1].__next__())
-                queue.put((read1, read2))
+            read1 = process_reads.Read(parlist[0].__next__())
+            read2 = process_reads.Read(parlist[1].__next__())
+            queue.put((read1, read2), block = True)
         except StopIteration:
             print("Finished Feeding Data")
             for t in range(parlist[2]):
@@ -36,7 +33,7 @@ def process_read(queue_in, queue_out, thread_id, reference, distance, cut_site, 
     waiting_for_reads = 0
     while True:
         try:
-            reads = queue_in.get(block=False)
+            reads = queue_in.get(block = True)
             start = time.time()
             if reads:
                 reads[0].split_read(cut_site, min_len)
