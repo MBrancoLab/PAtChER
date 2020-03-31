@@ -84,24 +84,15 @@ def process_unique_one(reference, hits, read1, read2, distance):
                     distance_list.append(new_hit.r_st - distance)
                 else:
                     distance_list.append(distance - new_hit.r_en)
-            cumulative_probability = 0
             probability_list = []
             for dist in distance_list:
                 scale_probability = math.exp(-0.8 * dist/50 - 0.6618)
-                if scale_probability < 0:
-                    scale_probability = 0
-                cumulative_probability += scale_probability
-                probability_list.append(cumulative_probability)
-
-            selected_probability = random.random()*cumulative_probability
-            selected_probability = random.random()*cumulative_probability
-            pindex = 0
-            while selected_probability >= probability_list[pindex]:
-                pindex += 1
+                probability_list.append(scale_probability)
+            pindex = random.choices(range(len(probability_list)), weights=probability_list)[0]
             if indx == 0:
-                out[1] = [get_output_var(new_hits[pindex-1]), "p"]
+                out[1] = [get_output_var(new_hits[pindex]), "p"]
                 out[1][0]["ctg"] = out[0][0]["ctg"]
             else:
-                out[0] = [get_output_var(new_hits[pindex-1]), "p"]
+                out[0] = [get_output_var(new_hits[pindex]), "p"]
                 out[0][0]["ctg"] = out[1][0]["ctg"]
     return out
