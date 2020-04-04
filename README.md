@@ -11,10 +11,10 @@ PAtChER is written in `python` and is only compatible with v3 and above. It make
 We highly recommend using virtual environments.
 
 ```bash
+git clone git@github.com:MBrancoLab/PAtChER.git
 virtualenv --include-lib patcherenv
 . patcherenv/bin/activate
-pip install mappy
-pip install pysam
+pip install ./PAtChER
 ```
 
 ## Running
@@ -23,7 +23,7 @@ Running PAtChER is a simple then as
 
 ```bash
 . patcherenv/bin/activate
-python3 patcher.py
+patcher
 ```
 
 Which returns
@@ -47,19 +47,19 @@ Options:
 A small example dataset is available in the `example_data` folder. To produce result in `SAM` format run the following command
 
 ```bash
-python3 patcher.py -g example_data/test_genome.fa -r1 example_data/ESC4_R1_sample.fq -r2 example_data/ESC4_R2_sample.fq -o example_data/output.sam
+patcher -g example_data/test_genome.fa -r1 example_data/ESC4_R1_sample.fq -r2 example_data/ESC4_R2_sample.fq -o example_data/output.sam
 ```
 
 To run with multiple threads:
 
 ```bash
-python3 patcher.py -g example_data/test_genome.fa -r1 example_data/ESC4_R1_sample.fq -r2 example_data/ESC4_R2_sample.fq -o example_data/output.sam -t 4
+patcher -g example_data/test_genome.fa -r1 example_data/ESC4_R1_sample.fq -r2 example_data/ESC4_R2_sample.fq -o example_data/output.sam -t 4
 ```
 
 To run output in `BAM` format:
 
 ```bash
-python3 patcher.py -g example_data/test_genome.fa -r1 example_data/ESC4_R1_sample.fq -r2 example_data/ESC4_R2_sample.fq -o example_data/output.bam -b
+patcher -g example_data/test_genome.fa -r1 example_data/ESC4_R1_sample.fq -r2 example_data/ESC4_R2_sample.fq -o example_data/output.bam -b
 ```
 
 ## Unpair alignments

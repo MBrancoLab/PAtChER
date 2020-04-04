@@ -1,11 +1,11 @@
 import threading
-import mappy as mp
 import time
 from multiprocessing import Process, Queue
 from queue import Empty
-import process_reads
-import alignment
-from output import SAMBAMWriter
+import mappy as mp
+from .process_reads import Read
+from .alignment import map_reads
+from .output import SAMBAMWriter
 
 def feed(queue, parlist):
     """
@@ -13,8 +13,8 @@ def feed(queue, parlist):
     """
     while True:
         try:
-            read1 = process_reads.Read(parlist[0].__next__())
-            read2 = process_reads.Read(parlist[1].__next__())
+            read1 = Read(parlist[0].__next__())
+            read2 = Read(parlist[1].__next__())
             queue.put((read1, read2), block = True)
         except StopIteration:
             print("Finished Feeding Data")
@@ -50,7 +50,7 @@ Time taken waiting to process reads: {waiting_for_reads}
                           """)
                 if reads[0].seq and reads[1].seq:
                     start = time.time()
-                    res = alignment.map_reads(reference, reads[0], reads[1], distance)
+                    res = map_reads(reference, reads[0], reads[1], distance)
                     alignment_time += time.time()-start
                     if res:
                         queue_out.put((res, reads[0], reads[1], distance))

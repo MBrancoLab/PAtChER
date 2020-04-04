@@ -10,12 +10,11 @@ class SAMBAMWriter():
     def __init__(self, filename, genome, output_type):
         self.dct_chr = {}
         header = self.create_header(genome)
-        if output_type == "SAM":
-            self.sambam_file = pysam.AlignmentFile(filename, "w", header=header)
-        elif output_type == "BAM":
+        if output_type:
             self.sambam_file = pysam.AlignmentFile(filename, "wb", header=header)
         else:
-            raise Exception(f"Unknown output_type: {output_type}. Should be SAM or BAM")
+            self.sambam_file = pysam.AlignmentFile(filename, "w", header=header)
+
     def create_header(self, genome):
         """
         Method to produce the header for SAM or BAM file
