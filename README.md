@@ -2,7 +2,7 @@
 
 ![logo](PAtChER_logo.png?raw=true "Logo")
 
-PAtChER is a tool to help re-assign non uniquely mapping reads within a HiChIP experiment.
+PAtChER is a tool that uses HiChIP data to guide the assignment of multimapping reads from the ChIP step to unique locations in the genome. It thus generates a ChIP-seq output with increased genome coverage. 
 
 ## Installation
 
@@ -60,4 +60,18 @@ To run output in `BAM` format:
 
 ```bash
 python3 patcher.py -g example_data/test_genome.fa -r1 example_data/ESC4_R1_sample.fq -r2 example_data/ESC4_R2_sample.fq -o example_data/output.bam -b
+```
+
+## Unpair alignments
+
+From paired-end HiChIP data, PAtChER essentially produces single-end ChIP-seq alignments. Although the pairing information is preserved and could be useful, unpairing reads may be necessary for correct processing of the output in downstream applications (e.g., to generate bigwig tracks). For this purpose, the PAtChER SAM/BAM output may be processed by the unpair.py tool:
+
+```bash
+usage: unpair.py [-h] -i <sam/bam> -o <sam/bam> [-u]
+
+optional arguments:
+  -h, --help    show this help message and exit
+  -i <sam/bam>  input BAM/SAM file
+  -o <sam/bam>  output BAM/SAM file
+  -u            write uncompressed (SAM) format
 ```
