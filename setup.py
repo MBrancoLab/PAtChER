@@ -23,6 +23,7 @@ setuptools.setup(
     entry_points={
         "console_scripts": [
             "patcher = PAtChER.patcher:main".format(__pkg_name__),
+            "unpair = PAtChER.unpair:main".format(__pkg_name__),
         ],
     },
     python_requires='>=3.6',
