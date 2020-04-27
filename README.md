@@ -67,7 +67,7 @@ patcher -g example_data/test_genome.fa -r1 example_data/ESC4_R1_sample.fq -r2 ex
 From paired-end HiChIP data, PAtChER essentially produces single-end ChIP-seq alignments. Although the pairing information is preserved and could be useful, unpairing reads may be necessary for correct processing of the output in downstream applications (e.g., to generate bigwig tracks). For this purpose, the PAtChER SAM/BAM output may be processed by the unpair.py tool:
 
 ```
-usage: unpair.py [-h] -i <sam/bam> -o <sam/bam> [-u]
+usage: unpair [-h] -i <sam/bam> -o <sam/bam> [-u]
 
 optional arguments:
   -h, --help    show this help message and exit

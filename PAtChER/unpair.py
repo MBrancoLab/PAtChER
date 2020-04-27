@@ -11,28 +11,33 @@ def parse_args(argv):
     Parses command line options when module is run as main
     """
     args = argparse.ArgumentParser()
-    args.add_argument('-i', required=True,
+    args.add_argument('-i','--input', required=True,
                       metavar='<sam/bam>',
                       help='input BAM/SAM file')
-    args.add_argument('-o', required=True,
+    args.add_argument('-o','--output', required=True,
                       metavar='<sam/bam>',
                       help='output BAM/SAM file')
-    args.add_argument('-u', action="store_true",
+    args.add_argument('-u','--uncompressed', action="store_true",
                       help='write uncompressed (SAM) format')
     return(args.parse_args())
-        
 
-def unpair(ifile, ofile, sam):
+
+def main():
     """
     Removes read pairing information from a SAM/BAM file
     """
-    i = pysam.AlignmentFile(ifile, 'r')
-    if sam:
-        o = pysam.AlignmentFile(ofile, 'w', header = i.header)
-    else:
-        o = pysam.AlignmentFile(ofile, 'wb', header = i.header)
+    args = parse_args(sys.argv[1:])
+    input_filename = args.input
+    output_filename = args.output
+    sam = args.uncompressed
 
-    for segment in i:
+    input_bam = pysam.AlignmentFile(input_filename, 'r')
+    if sam:
+        output_bam = pysam.AlignmentFile(output_filename, 'w', header=i.header)
+    else:
+        output_bam = pysam.AlignmentFile(output_filename, 'wb', header=i.header)
+
+    for segment in input_bam:
         if segment.is_reverse:
             segment.flag = 16
         else:
@@ -40,12 +45,7 @@ def unpair(ifile, ofile, sam):
         segment.next_reference_id = -1  # set RNEXT to *
         segment.next_reference_start = -1  # set PNEXT to 0
         segment.template_length = 0  # set TLEN to 0
-        o.write(segment)
+        output_bam.write(segment)
 
-    i.close()
-    o.close()
-
-
-if __name__ == '__main__':
-    args = parse_args(sys.argv[1:])
-    unpair(args.i, args.o, args.u)
+    input_bam.close()
+    output_bam.close()
