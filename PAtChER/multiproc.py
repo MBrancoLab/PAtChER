@@ -77,7 +77,7 @@ def save(queue, fname, reference, output_type, nthreads):
                 if out == None:
                     n_nones += 1
         except Empty:
-            time.sleep(1)
+            time.sleep(0.01)
             if n_nones == (nthreads - 2):
                 break
 
