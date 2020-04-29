@@ -54,7 +54,7 @@ def main():
     parser.add_argument('-d',
                         '--distance',
                         required=False,
-                        default=10,
+                        default=10000,
                         help="Set distance to map around total is +/- value")
     parser.add_argument('-D', '--debug', required=False, action='store_true', help="Turn on debug")
     parser.add_argument('-t', '--threads', required=False, default=1, help="Set the number of threads")
