@@ -53,11 +53,12 @@ def main():
                         help="Set the read sequence for 2 end (Must be FASTQ/Can be gzipped)")
     parser.add_argument('-d',
                         '--distance',
+                        type=int,
                         required=False,
                         default=10000,
                         help="Set distance to map around total is +/- value")
     parser.add_argument('-D', '--debug', required=False, action='store_true', help="Turn on debug")
-    parser.add_argument('-t', '--threads', required=False, default=1, help="Set the number of threads")
+    parser.add_argument('-t', '--threads', type=int, required=False, default=1, help="Set the number of threads")
     parser.add_argument('-c',
                         '--cut-site',
                         required=False,
@@ -65,6 +66,7 @@ def main():
                         help="Cut Site. Defaults to GATC. This will cut GATCGATC")
     parser.add_argument('-l',
                         '--min-len',
+                        type=int,
                         required=False,
                         default=20,
                         help="Minimum length read to keep for mapping. Defaults to 20")
