@@ -47,19 +47,19 @@ Options:
 A small example dataset is available in the `example_data` folder. To produce result in `SAM` format run the following command
 
 ```bash
-patcher -g example_data/test_genome.fa -r1 example_data/ESC4_R1_sample.fq -r2 example_data/ESC4_R2_sample.fq -o example_data/output.sam
+patcher -g tests/data/test_genome.fa -r1 tests/data/ESC4_R1_sample.fq -r2 tests/data/ESC4_R2_sample.fq -o tests/data/output.sam
 ```
 
 To run with multiple threads:
 
 ```bash
-patcher -g example_data/test_genome.fa -r1 example_data/ESC4_R1_sample.fq -r2 example_data/ESC4_R2_sample.fq -o example_data/output.sam -t 4
+patcher -g tests/data/test_genome.fa -r1 tests/data/ESC4_R1_sample.fq -r2 tests/data/ESC4_R2_sample.fq -o tests/data/output.sam -t 4
 ```
 
 To run output in `BAM` format:
 
 ```bash
-patcher -g example_data/test_genome.fa -r1 example_data/ESC4_R1_sample.fq -r2 example_data/ESC4_R2_sample.fq -o example_data/output.bam -b
+patcher -g tests/data/test_genome.fa -r1 tests/data/ESC4_R1_sample.fq -r2 tests/data/ESC4_R2_sample.fq -o tests/data/output.bam -b
 ```
 
 ## Unpair alignments
