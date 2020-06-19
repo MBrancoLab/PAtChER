@@ -2,6 +2,7 @@
 Provides main code to run single processor version
 """
 import sys
+import os.path
 from argparse import ArgumentParser
 import mappy as mp
 from .process_reads import Read
@@ -73,16 +74,22 @@ def main():
     parser.add_argument('-b', '--bam', required=False, action='store_true', help="Output results in BAM format")
     args = parser.parse_args()
 
-    reads1 = mp.fastx_read(args.read1)
-    reads2 = mp.fastx_read(args.read2)
+    if os.path.exists(args.read1):
+        reads1 = mp.fastx_read(args.read1)
+    else:
+        raise Exception(f"ERROR: could not open file {args.read1}")
+    if os.path.exists(args.read2):
+        reads2 = mp.fastx_read(args.read2)
+    else:
+        raise Exception(f"ERROR: could not open file {args.read2}")
 
-    print(f"Using refrence:{args.genome}")
-    print(f"Using read 1:{args.read1}")
-    print(f'Using read 2:{args.read2}')
-    print(f'Using distance +/-:{args.distance}')
-    print(f"Using threads:{args.threads}")
-    print(f"Using cutsite:{args.cut_site}")
-    print(f"Writing to:{args.output}")
+    print(f"Using refrence: {args.genome}")
+    print(f"Using read 1: {args.read1}")
+    print(f'Using read 2: {args.read2}')
+    print(f'Using distance +/-: {args.distance}')
+    print(f"Using threads: {args.threads}")
+    print(f"Using cutsite: {args.cut_site}")
+    print(f"Writing to: {args.output}")
     if args.threads > 3:
         run(args.genome, reads1, reads2, args.output,
                       args.distance, args.threads, args.cut_site, args.min_len, args.bam, args.debug)
