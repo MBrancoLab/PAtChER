@@ -14,7 +14,7 @@ We highly recommend using virtual environments.
 git clone git@github.com:MBrancoLab/PAtChER.git
 virtualenv --include-lib patcherenv
 . patcherenv/bin/activate
-pip install ./PAtChER
+pip install ./
 ```
 
 ## Running
