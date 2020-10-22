@@ -50,7 +50,7 @@ optional arguments:
   -c CUT_SITE, --cut-site CUT_SITE
                         Cut Site. Defaults to GATC. This will cut GATCGATC
   -l MIN_LEN, --min-len MIN_LEN
-                        Minimum length read to keep for mapping. Defaults to 20
+                        Minimum length read to keep for mapping. Defaults to 40
   -b, --bam             Output results in BAM format
 ```
 
