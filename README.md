@@ -23,23 +23,35 @@ Running PAtChER is a simple then as
 
 ```bash
 . patcherenv/bin/activate
-patcher
+patcher -h
 ```
 
 Which returns
 
 ```
-Usage: patcher -g <target.fa> -r1 <query.fq.gz> -r2 <query.fq.gz> -o <output.txt>
-Options:
-	-g		Set the reference sequence (Must be FASTA)
-	-r1		Set the read sequence for 1 end (Must be FASTQ/Can be gzipped)
-	-r2		Set the read sequence for 2 end (Must be FASTQ/Can be gzipped)
-	-t		Set the number of threads
-	-d		Set distance to map around total is +/- value
-	-o		Set output filename
-	-c		Cut Site. Default to GATC. This will cut GATCGATC
-	-l		Minimum length read to keep for mapping. Defaults to 20
-	-b    Output results in BAM format.
+usage: PAtChER is a tool to help re-assign non uniquely mapping reads within a HiChIP experiment.
+       [-h] -g GENOME -o OUTPUT -r1 READ1 -r2 READ2 [-d DISTANCE] [-D] [-t THREADS] [-c CUT_SITE] [-l MIN_LEN] [-b]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -g GENOME, --genome GENOME
+                        Set the reference sequence (Must be FASTA)
+  -o OUTPUT, --output OUTPUT
+                        Set output filename
+  -r1 READ1, --read1 READ1
+                        Set the read sequence for 1 end (Must be FASTQ/Can be gzipped)
+  -r2 READ2, --read2 READ2
+                        Set the read sequence for 2 end (Must be FASTQ/Can be gzipped)
+  -d DISTANCE, --distance DISTANCE
+                        Set distance to map around total is +/- value
+  -D, --debug           Turn on debug
+  -t THREADS, --threads THREADS
+                        Set the number of threads
+  -c CUT_SITE, --cut-site CUT_SITE
+                        Cut Site. Defaults to GATC. This will cut GATCGATC
+  -l MIN_LEN, --min-len MIN_LEN
+                        Minimum length read to keep for mapping. Defaults to 40
+  -b, --bam             Output results in BAM format
 ```
 
 ## Example

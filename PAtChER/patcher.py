@@ -69,8 +69,8 @@ def main():
                         '--min-len',
                         type=int,
                         required=False,
-                        default=20,
-                        help="Minimum length read to keep for mapping. Defaults to 20")
+                        default=40,
+                        help="Minimum length read to keep for mapping. Defaults to 40")
     parser.add_argument('-b', '--bam', required=False, action='store_true', help="Output results in BAM format")
     args = parser.parse_args()
 
