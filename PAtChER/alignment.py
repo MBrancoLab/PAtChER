@@ -91,9 +91,9 @@ def process_unique_one(reference, hits, read1, read2, distance):
                 scale_probability = math.exp(-0.8 * dist/50 - 0.6618) # probability distribution
                 probability_list.append(scale_probability) # assign probabilities to each hit
                 if sum(probability_list) == 0:
-                    pindex = random.choices(range(len(probability_list))) # if all probabilities are 0, choose any hit 
+                    pindex = random.choices(range(len(probability_list)))[0] # if all probabilities are 0, choose any hit 
                 else:
-                    pindex = random.choices(range(len(probability_list)), weights=probability_list) # randomly choose hit based on probabilities
+                    pindex = random.choices(range(len(probability_list)), weights=probability_list)[0] # randomly choose hit based on probabilities
             if indx == 0:
                 out[1] = [get_output_var(new_hits[pindex]), "p"] # probabilistic hit for R2
                 out[1][0]["ctg"] = out[0][0]["ctg"]
