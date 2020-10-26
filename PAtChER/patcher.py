@@ -90,7 +90,7 @@ def main():
     print(f"Using threads: {args.threads}")
     print(f"Using cutsite: {args.cut_site}")
     print(f"Writing to: {args.output}")
-    if args.threads > 3:
+    if args.threads >= 3:
         run(args.genome, reads1, reads2, args.output,
                       args.distance, args.threads, args.cut_site, args.min_len, args.bam, args.debug)
     else:
