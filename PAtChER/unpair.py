@@ -33,9 +33,9 @@ def main():
 
     input_bam = pysam.AlignmentFile(input_filename, 'r')
     if sam:
-        output_bam = pysam.AlignmentFile(output_filename, 'w', header=i.header)
+        output_bam = pysam.AlignmentFile(output_filename, 'w', header=input_bam.header)
     else:
-        output_bam = pysam.AlignmentFile(output_filename, 'wb', header=i.header)
+        output_bam = pysam.AlignmentFile(output_filename, 'wb', header=input_bam.header)
 
     for segment in input_bam:
         if segment.is_reverse:
