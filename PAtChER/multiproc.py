@@ -22,7 +22,7 @@ def feed(queue, parlist):
                 queue.put(None)
             break
 
-def process_read(queue_in, queue_out, thread_id, reference, distance, cut_site, min_len, debug):
+def process_read(queue_in, queue_out, thread_id, reference, distance, cut_site, min_rec, min_len, debug):
     """
     Method for the main processing including quality trim and read splitting
     plus alignment
@@ -36,9 +36,9 @@ def process_read(queue_in, queue_out, thread_id, reference, distance, cut_site, 
             reads = queue_in.get(block = True)
             start = time.time()
             if reads:
-                reads[0].split_read(cut_site, min_len)
+                reads[0].split_read(cut_site, min_rec, min_len)
                 reads[0].qual_trim(10, 10)
-                reads[1].split_read(cut_site, min_len)
+                reads[1].split_read(cut_site, min_rec, min_len)
                 reads[1].qual_trim(10, 10)
                 time_processing_reads += time.time() - start
                 nreads += 1
@@ -82,7 +82,7 @@ def save(queue, fname, reference, output_type, nthreads):
                 break
 
 
-def run(reffile, read1, read2, fname, distance, nthreads, cut_site, min_len, output_type, debug):
+def run(reffile, read1, read2, fname, distance, nthreads, cut_site, min_rec, min_len, output_type, debug):
     """
     Method which sets up the multiprocessing and orchestrates the process
     """
@@ -103,7 +103,7 @@ def run(reffile, read1, read2, fname, distance, nthreads, cut_site, min_len, out
     threads = []
     for index in range(nthreads - 2):
         x = Process(target=process_read,
-                             args=(read_queue, result_queue, index, reference, distance, cut_site, min_len, debug),
+                             args=(read_queue, result_queue, index, reference, distance, cut_site, min_rec, min_len, debug),
                              daemon=True)
         x.start()
         threads.append(x)
