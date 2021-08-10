@@ -15,18 +15,18 @@ class Read:
         self.qual_str = dt[2]
         self.qual = [ord(x)-33 for x in dt[2]]
 
-    def split_read(self, recseq, minlen):
+    def split_read(self, recseq, minrec, minlen):
         """
         Method to split reads based on a recognition sequence
         """
         hitsite = -1
-        for hit in re.finditer(f"{recseq}{recseq[0]}", self.seq):
+        for hit in re.finditer(recseq[0:minrec], self.seq):
             hit_pos = hit.start()
             if hit_pos != -1:
                 site = True
-                for counter, value in enumerate(recseq):
-                    if hit_pos+counter+len(recseq) < len(self.seq):
-                        if self.seq[hit_pos+counter+len(recseq)] != value:
+                for counter, base in enumerate(recseq):
+                    if hit_pos+counter < len(self.seq):
+                        if self.seq[hit_pos+counter] != base:
                             site = False
                 if site:
                     hitsite = hit_pos
@@ -36,8 +36,8 @@ class Read:
                 self.seq = None
                 self.qual = None
             else:
-                self.seq = self.seq[:(hitsite+len(recseq))]
-                self.qual = self.qual[:(hitsite+len(recseq))]
+                self.seq = self.seq[:hitsite]
+                self.qual = self.qual[:hitsite]
 
     def qual_trim(self, cutoff_front, cutoff_back):
         """
