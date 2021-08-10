@@ -2,7 +2,7 @@
 
 ![logo](PAtChER_logo.png?raw=true "Logo")
 
-PAtChER is a tool that uses HiChIP data to guide the assignment of multimapping reads from the ChIP step to unique locations in the genome. It thus generates a ChIP-seq output with increased genome coverage. 
+PAtChER is a tool that uses HiChIP data to guide the assignment of multimapping reads from the ChIP step to unique locations in the genome. It thus generates a ChIP-seq-like output with increased genome coverage. 
 
 ## Installation
 
@@ -29,8 +29,9 @@ patcher -h
 Which returns
 
 ```
-usage: PAtChER is a tool to help re-assign non uniquely mapping reads within a HiChIP experiment.
-       [-h] -g GENOME -o OUTPUT -r1 READ1 -r2 READ2 [-d DISTANCE] [-D] [-t THREADS] [-c CUT_SITE] [-l MIN_LEN] [-b]
+usage: PAtChER is a tool to help re-assign non uniquely mapping reads within a HiChIP experiment. [-h] -g GENOME -o OUTPUT -r1 READ1 -r2 READ2
+                                                                                                  [-d DISTANCE] [-D] [-t THREADS] [-c CUT_SITE]
+                                                                                                  [-m MIN_REC] [-l MIN_LEN] [-b]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -48,9 +49,11 @@ optional arguments:
   -t THREADS, --threads THREADS
                         Set the number of threads
   -c CUT_SITE, --cut-site CUT_SITE
-                        Cut Site. Defaults to GATC. This will cut GATCGATC
+                        Cut Site. Defaults to GATCGATC, i.e., a DpnII site after digestion, fill-in and ligation
+  -m MIN_REC, --min-rec MIN_REC
+                        Minimum length of cut site to recognise when at the 3' end. Defaults to 5
   -l MIN_LEN, --min-len MIN_LEN
-                        Minimum length read to keep for mapping. Defaults to 40
+                        Minimum read length to keep for mapping. Defaults to 40
   -b, --bam             Output results in BAM format
 ```
 
@@ -74,9 +77,15 @@ To run output in `BAM` format:
 patcher -g tests/data/test_genome.fa -r1 tests/data/ESC4_R1_sample.fq -r2 tests/data/ESC4_R2_sample.fq -o tests/data/output.bam -b
 ```
 
-## Unpair alignments
+## Output
 
-From paired-end HiChIP data, PAtChER essentially produces single-end ChIP-seq alignments. Although the pairing information is preserved and could be useful, unpairing reads may be necessary for correct processing of the output in downstream applications (e.g., to generate bigwig tracks). For this purpose, the PAtChER SAM/BAM output may be processed by the unpair.py tool:
+PAtChER outputs data in standard SAM/BAM format. One specific field is added (PO:A) that defines the type of alignment for each read:
+* u - uniquely aligned read for which both ends aligned
+* s - uniquely aligned read for which only one end aligned
+* r - region-based alignment, where a non-unique end aligns once within the defined distance from the unique end
+* p - proximity-based alignment, where the nearest hit within the defined distance from the unique end is chosen
+
+From paired-end HiChIP data, PAtChER produces single-end ChIP-seq alignments. Although the pairing information is preserved and could be useful, unpairing reads may be necessary for correct processing of the output in downstream applications (e.g., to generate bigwig tracks). For this purpose, the PAtChER SAM/BAM output can be processed using the unpair.py tool:
 
 ```
 usage: unpair [-h] -i <sam/bam> -o <sam/bam> [-u]
