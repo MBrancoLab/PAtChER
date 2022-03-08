@@ -78,26 +78,22 @@ def process_unique_one(reference, hits, read1, read2, distance):
                 out[0] = [get_output_var(new_hits[0]), "r"] # R1 has local unique hit
                 out[0][0]["ctg"] = out[1][0]["ctg"]
 
-        #If more than one local hit, use probabilistic assignment
+        #If more than one local hit, keep nearest
         elif len(new_hits) > 0:
-            distance_list = []
+            maxdist = distance * 2
             for new_hit in new_hits:
                 if new_hit.r_st >= distance:
-                    distance_list.append(new_hit.r_st - distance)
+                    dist = new_hit.r_st - distance
                 else:
-                    distance_list.append(distance - new_hit.r_en)
-            probability_list = []
-            for dist in distance_list:
-                scale_probability = math.exp(-0.8 * dist/50 - 0.6618) # probability distribution
-                probability_list.append(scale_probability) # assign probabilities to each hit
-                if sum(probability_list) == 0:
-                    pindex = random.choices(range(len(probability_list)))[0] # if all probabilities are 0, choose any hit 
-                else:
-                    pindex = random.choices(range(len(probability_list)), weights=probability_list)[0] # randomly choose hit based on probabilities
+                    dist = distance - new_hit.r_en
+                if dist < maxdist:
+                    nearest_hit = new_hit
+                    maxdist = dist
+
             if indx == 0:
-                out[1] = [get_output_var(new_hits[pindex]), "p"] # probabilistic hit for R2
+                out[1] = [get_output_var(nearest_hit), "p"] # nearest hit for R2
                 out[1][0]["ctg"] = out[0][0]["ctg"]
             else:
-                out[0] = [get_output_var(new_hits[pindex]), "p"] # probabilistic hit for R1
+                out[0] = [get_output_var(nearest_hit), "p"] # nearest hit for R1
                 out[0][0]["ctg"] = out[1][0]["ctg"]
     return out
